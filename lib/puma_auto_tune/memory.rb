@@ -34,7 +34,7 @@ module PumaAutoTune
 
     def reset
       raise "must set master" unless @master
-      @workers.map {|w| w.reset_memory }
+      @workers.map {|w| w.reset_memory } unless @workers.nil?
       @workers      = nil
       @mb           = nil
     end
