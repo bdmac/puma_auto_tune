@@ -30,13 +30,13 @@ module PumaAutoTune
 
     def get_memory
       @memory = ::GetProcessMem.new(Process.pid).mb
-      puts "************ Master#get_memory: #{@memory}mb"
+      puts "************ PumaAutoTune: Master#get_memory: #{@memory}mb"
       @memory
     end
 
     def workers
       workers = @master.instance_variable_get("@workers").map {|w| cached_wrapped_worker(w) }
-      puts "************ Master#workers: #{workers.inspect}"
+      puts "************ PumaAutoTune: Master#workers: #{workers.inspect}"
       workers
     end
 
