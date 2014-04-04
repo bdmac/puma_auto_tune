@@ -12,9 +12,12 @@ module PumaAutoTune
 
     def get_memory
       @memory = if restarting?
+        puts "************ Worker restarting, 0 memory reported"
         0
       else
-        ::GetProcessMem.new(self.pid).mb
+        memory = ::GetProcessMem.new(self.pid).mb
+        puts "************ Worker#get_memory: #{memory}mb"
+        memory
       end
     end
 

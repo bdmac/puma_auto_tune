@@ -44,6 +44,8 @@ module PumaAutoTune
       msg     = ["PumaAutoTune (#{elapsed}s): #{msg}"]
 
       options[@resource.name] = @resource.amount
+      options["master_memory"] = @resource.master_memory
+      options["worker_memory"] = @resource.worker_memory
       options["current_cluster_size"] = @resource.workers.size
       options.each { |k, v| msg << "measure#puma.#{k.to_s.downcase}=#{v}" }
       puts msg.join(" ")
