@@ -15,8 +15,7 @@ module PumaAutoTune
 
     def amount
       @mb ||= begin
-        worker_memory = workers.map {|w| w.memory }.inject(&:+) || 0
-        worker_memory + @master.get_memory
+        worker_memory + master_memory
       end
     end
 
@@ -29,13 +28,22 @@ module PumaAutoTune
     end
 
     def workers
-      workers ||= @master.workers.sort_by! {|w| w.get_memory }
+      @workers ||= @master.workers.sort_by! {|w| w.get_memory }
     end
 
     def reset
       raise "must set master" unless @master
+      @workers.map {|w| w.reset_memory } unless @workers.nil?
       @workers      = nil
       @mb           = nil
+    end
+
+    def worker_memory
+      workers.map {|w| w.memory }.inject(&:+) || 0
+    end
+
+    def master_memory
+      @master.get_memory
     end
   end
 end

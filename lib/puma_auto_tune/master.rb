@@ -1,6 +1,6 @@
 module PumaAutoTune
   class Master
-  def initialize(master = nil)
+    def initialize(master = nil)
       @master = master || get_master
     end
 
@@ -33,13 +33,21 @@ module PumaAutoTune
     end
 
     def workers
-      @master.instance_variable_get("@workers").map {|w| PumaAutoTune::Worker.new(w) }
+      @master.instance_variable_get("@workers").map {|w| cached_wrapped_worker(w) }
     end
 
     private
 
+    # Always returns an existing PumaAutoTune::Worker instance if we have
+    # seen this puma_worker (by its pid). This allows the restarting flag
+    # to persist.
+    def cached_wrapped_worker(puma_worker)
+      @worker_cache ||= {}
+      @worker_cache[puma_worker.pid] ||= PumaAutoTune::Worker.new(puma_worker)
+    end
+
     def get_master
-      ObjectSpace.each_object(Puma::Cluster).map { |obj| obj }.first if defined?(Puma::Cluster)
+      ObjectSpace.each_object(Puma::Cluster).first if defined?(Puma::Cluster)
     end
   end
 end
