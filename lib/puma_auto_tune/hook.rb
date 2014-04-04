@@ -2,7 +2,7 @@ module PumaAutoTune
   class Hook
 
     def initialize(resource)
-      @resource = resource
+      @resource = resource # An instance of PumaAutoTune::Memory
       @started  = Time.now
       @hooks    = {}
       @wraps    = {}
@@ -16,6 +16,7 @@ module PumaAutoTune
 
     def call(name)
       hook = @hooks[name] or raise "No such hook #{name.inspect}. Available: #{@hooks.keys.inspect}"
+      # 3. self.args resets @resource
       hook.call(self.args)
     end
 
@@ -51,6 +52,7 @@ module PumaAutoTune
 
     def args
       @resource.reset
+      # 4. Gets new set of worker instances now.
       [@resource.amount, @resource.master, @resource.workers]
     end
   end

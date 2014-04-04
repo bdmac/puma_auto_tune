@@ -15,6 +15,10 @@ module PumaAutoTune
 
     def amount
       @mb ||= begin
+        # 6. Calling amount to send in args to hook.call theoretically
+        # expects a restarting worker to return 0 memory but we reset
+        # the worker instances so the restarting flag is no longer set
+        # and the restarted worker does not return 0...
         worker_memory = workers.map {|w| w.memory }.inject(&:+) || 0
         worker_memory + @master.get_memory
       end
@@ -29,6 +33,11 @@ module PumaAutoTune
     end
 
     def workers
+      # 5. Calling #workers will gather them again from the
+      # master process because reset will set @workers nil
+      # Actually this method DOES NOT actually memoize because
+      # we're not using @workers ||= here, not that it matters
+      # in this specific case because we called #reset already.
       workers ||= @master.workers.sort_by! {|w| w.get_memory }
     end
 

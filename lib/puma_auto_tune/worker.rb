@@ -11,6 +11,7 @@ module PumaAutoTune
     alias :mb :memory
 
     def get_memory
+      # Restarting will be false here because it will be a new worker
       @memory = if restarting?
         0
       else
