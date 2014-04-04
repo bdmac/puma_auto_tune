@@ -43,7 +43,7 @@ module PumaAutoTune
     # to persist.
     def cached_wrapped_worker(puma_worker)
       @worker_cache ||= {}
-      @worker_cache.fetch(puma_worker.pid) { PumaAutoTune::Worker.new(puma_worker) }
+      @worker_cache[puma_worker.pid] ||= PumaAutoTune::Worker.new(puma_worker)
     end
 
     def get_master
