@@ -29,11 +29,12 @@ module PumaAutoTune
     end
 
     def workers
-      workers ||= @master.workers.sort_by! {|w| w.get_memory }
+      @workers ||= @master.workers.sort_by! {|w| w.get_memory }
     end
 
     def reset
       raise "must set master" unless @master
+      @workers.map {|w| w.reset_memory }
       @workers      = nil
       @mb           = nil
     end

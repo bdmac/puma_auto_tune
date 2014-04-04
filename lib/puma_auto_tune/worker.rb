@@ -18,6 +18,14 @@ module PumaAutoTune
       end
     end
 
+    def reset_memory
+      # Reset memory so we recalculate how much we're using.
+      # This also allows subsequent calls to #memory to call
+      # into #get_memory which will start returning 0 when
+      # this worker is restarting.
+      @memory = nil
+    end
+
     def restarting?
       @restarting
     end
