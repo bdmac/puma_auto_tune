@@ -15,8 +15,7 @@ module PumaAutoTune
 
     def amount
       @mb ||= begin
-        worker_memory = workers.map {|w| w.memory }.inject(&:+) || 0
-        worker_memory + @master.get_memory
+        worker_memory + master_memory
       end
     end
 
@@ -37,6 +36,14 @@ module PumaAutoTune
       @workers.map {|w| w.reset_memory } unless @workers.nil?
       @workers      = nil
       @mb           = nil
+    end
+
+    def worker_memory
+      workers.map {|w| w.memory }.inject(&:+) || 0
+    end
+
+    def master_memory
+      @master.get_memory
     end
   end
 end
